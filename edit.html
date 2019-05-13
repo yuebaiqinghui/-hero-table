@@ -1,0 +1,102 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hero - Admin</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <style>
+        .hero-list img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="page-header container">
+            <h1>王者荣耀 <small>英雄管理器</small></h1>
+        </div>
+    </header>
+    <div class="container hero-list">
+        <form>
+            <table class="table table-hover">
+                <tbody>
+                    <input type="hidden" name="img" class="myimg" value="{{img}}">
+                    <input type="hidden" name="id" class="myid" value="{{id}}">
+                    <tr>
+                        <td>姓名：</td>
+                        <td><input type="text" name="name" value="{{name}}"></td>
+                    </tr>
+                    <tr>
+                        <td>性别：</td>
+                        <td>
+                            <input id="nan" name="gender" value="男" type="radio" {{gender=='男'?'checked':''}}><label
+                                for="nan">男</label>
+                            <input name="gender" value="女" type="radio" id="nv" {{gender=='女'?'checked':''}}><label
+                                for="nv">女</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>头像：</td>
+                        <td>
+                            <img src="/images/{{img}}" alt="" id="photo" width="100"
+                                style='border: 1px solid #ccc;margin-bottom: 5px;'>
+                            <input type="file" id="img">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="button" id="sub" value="编辑"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script>
+    </script>
+    <script>
+        $(function () {
+
+            $('tbody').on('change', "#img", function () {
+                var file = document.querySelector('#img').files[0]
+                var formdata = new FormData()
+                formdata.append('img', file)
+
+                $.ajax({
+                    type: 'post',
+                    url: '/uploadFile',
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.code == 200) {
+                            $('#photo').attr('src', '/images/' + res.img)
+                            $('.myimg').val(res.img)
+                        }
+                    }
+                })
+            })
+
+            $('tbody').on('click', '#sub', function () {
+                $.ajax({
+                    type: 'post',
+                    url: '/edit',
+                    data: $('form').serialize(),
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert(res.msg)
+                            location.href = '/'
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+
+</body>
+
+</html>
